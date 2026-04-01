@@ -1,0 +1,401 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size);
+  color: var(--vscode-editor-foreground);
+  background: var(--vscode-editor-background);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ---- Sheet Tabs ---- */
+.sheet-tabs {
+  display: flex;
+  flex-shrink: 0;
+  gap: 2px;
+  padding: 4px 8px 0;
+  background: var(--vscode-editorGroupHeader-tabsBackground);
+  border-bottom: 1px solid var(--vscode-tab-border);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.sheet-tab {
+  padding: 4px 14px;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  background: var(--vscode-tab-inactiveBackground);
+  color: var(--vscode-tab-inactiveForeground);
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 12px;
+  transition: background 0.1s;
+}
+
+.sheet-tab:hover { background: var(--vscode-tab-hoverBackground); }
+
+.sheet-tab.active {
+  background: var(--vscode-tab-activeBackground);
+  color: var(--vscode-tab-activeForeground);
+  border-color: var(--vscode-tab-border);
+  border-bottom-color: var(--vscode-tab-activeBackground);
+}
+
+/* ---- 公式栏 ---- */
+.formula-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-bottom: 1px solid var(--vscode-editorGroup-border);
+  flex-shrink: 0;
+  background: var(--vscode-editor-background);
+}
+
+.cell-addr {
+  min-width: 56px;
+  padding: 2px 6px;
+  background: var(--vscode-input-background);
+  border: 1px solid var(--vscode-input-border, transparent);
+  border-radius: 3px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--vscode-input-foreground);
+}
+
+.formula-input {
+  flex: 1;
+  padding: 2px 8px;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border, transparent);
+  border-radius: 3px;
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 13px;
+  height: 22px;
+}
+
+.formula-input:focus {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: -1px;
+}
+
+/* ---- 工具栏 ---- */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-bottom: 1px solid var(--vscode-editorGroup-border);
+  background: var(--vscode-editor-background);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.toolbar-btn {
+  padding: 2px 10px;
+  background: var(--vscode-button-secondaryBackground, #3a3d41);
+  color: var(--vscode-button-secondaryForeground, #ccc);
+  border: 1px solid var(--vscode-button-border, transparent);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+  height: 22px;
+  line-height: 18px;
+}
+
+.toolbar-btn:hover {
+  background: var(--vscode-button-secondaryHoverBackground, #45494e);
+}
+
+.toolbar-input {
+  width: 52px;
+  height: 22px;
+  padding: 0 4px;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border, transparent);
+  border-radius: 3px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.toolbar-input:focus {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: -1px;
+}
+
+.toolbar-label {
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+  white-space: nowrap;
+}
+
+.toolbar-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--vscode-editorGroup-border);
+  margin: 0 2px;
+}
+
+/* ---- 表格容器 ---- */
+.table-container {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+.table-wrapper {
+  display: inline-block;
+  min-width: 100%;
+}
+
+/* ---- 表格 ---- */
+.sheet-table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: max-content;
+}
+
+.sheet-table th,
+.sheet-table td {
+  border: 1px solid var(--vscode-editorGroup-border);
+  padding: 1px 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 64px;
+  max-width: 200px;
+  height: 22px;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+/* 固定表头 */
+.corner-header,
+.col-header,
+.row-header {
+  background: var(--vscode-editorGroupHeader-tabsBackground);
+  color: var(--vscode-descriptionForeground);
+  font-weight: normal;
+  text-align: center;
+  user-select: none;
+  position: sticky;
+  z-index: 1;
+}
+
+.col-header { top: 0; z-index: 2; }
+.row-header { left: 0; min-width: 40px; max-width: 40px; }
+.corner-header { top: 0; left: 0; z-index: 3; }
+
+/* 数据单元格 */
+.data-cell {
+  cursor: cell;
+  outline: none;
+}
+
+.data-cell:focus {
+  box-shadow: inset 0 0 0 2px var(--vscode-focusBorder);
+}
+
+.data-cell.selected {
+  background: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
+
+.data-cell.numeric { text-align: right; }
+
+.data-cell.formula-cell {
+  color: var(--vscode-textLink-foreground);
+}
+
+/* 编辑输入框 */
+.cell-input {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0 4px;
+  margin: 0;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  outline: 2px solid var(--vscode-focusBorder);
+  outline-offset: -2px;
+}
+
+/* ---- 状态栏 ---- */
+.status-bar {
+  padding: 2px 12px;
+  background: var(--vscode-statusBar-background, #007acc);
+  color: var(--vscode-statusBar-foreground, #fff);
+  font-size: 11px;
+  flex-shrink: 0;
+  line-height: 20px;
+}
+
+.empty-tip {
+  padding: 48px;
+  text-align: center;
+  color: var(--vscode-descriptionForeground);
+  font-size: 14px;
+}
+
+/* ---- 行/列整体选中高亮 ---- */
+.data-cell.row-selected {
+  background: color-mix(in srgb, var(--vscode-list-hoverBackground) 60%, transparent);
+}
+.data-cell.col-selected {
+  background: color-mix(in srgb, var(--vscode-list-hoverBackground) 60%, transparent);
+}
+.col-header.col-header-selected {
+  background: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
+.row-header.row-header-selected {
+  background: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
+
+/* 剪贴板中的行/列：虚线边框标识 */
+.data-cell.clipboard-row {
+  outline: 1px dashed var(--vscode-focusBorder);
+  outline-offset: -1px;
+}
+.data-cell.clipboard-col {
+  outline: 1px dashed var(--vscode-focusBorder);
+  outline-offset: -1px;
+}
+
+/* ---- 右键上下文菜单 ---- */
+.context-menu {
+  position: fixed;
+  background: var(--vscode-menu-background, #252526);
+  border: 1px solid var(--vscode-menu-border, #454545);
+  border-radius: 4px;
+  padding: 4px 0;
+  z-index: 1000;
+  min-width: 180px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  user-select: none;
+  display: none;
+}
+.context-menu.visible { display: block; }
+
+.context-menu-item {
+  padding: 5px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--vscode-menu-foreground, #ccc);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.context-menu-item:hover {
+  background: var(--vscode-menu-selectionBackground, #094771);
+  color: var(--vscode-menu-selectionForeground, #fff);
+}
+.context-menu-item.disabled {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+.ctx-shortcut {
+  color: var(--vscode-descriptionForeground);
+  font-size: 11px;
+}
+.context-menu-item:hover .ctx-shortcut {
+  color: var(--vscode-menu-selectionForeground, #fff);
+  opacity: 0.7;
+}
+.context-menu-sep {
+  height: 1px;
+  background: var(--vscode-menu-separatorBackground, #454545);
+  margin: 3px 0;
+}
+
+/* ---- 模态对话框 ---- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.visible { display: flex; }
+
+.modal {
+  background: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-input-border, #454545);
+  border-radius: 6px;
+  padding: 20px;
+  min-width: 300px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.modal-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--vscode-editor-foreground);
+}
+.modal-input {
+  width: 100%;
+  padding: 4px 8px;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border, #454545);
+  border-radius: 3px;
+  font-size: 13px;
+  height: 26px;
+  margin-bottom: 14px;
+}
+.modal-input:focus {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: -1px;
+}
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.modal-btn {
+  padding: 4px 16px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  height: 26px;
+  border: 1px solid transparent;
+}
+.modal-btn-primary {
+  background: var(--vscode-button-background, #0e639c);
+  color: var(--vscode-button-foreground, #fff);
+}
+.modal-btn-primary:hover { background: var(--vscode-button-hoverBackground, #1177bb); }
+.modal-btn-secondary {
+  background: var(--vscode-button-secondaryBackground, #3a3d41);
+  color: var(--vscode-button-secondaryForeground, #ccc);
+}
+.modal-btn-secondary:hover { background: var(--vscode-button-secondaryHoverBackground, #45494e); }
+
+/* ---- Tab 内联重命名输入框 ---- */
+.tab-rename-input {
+  padding: 0 4px;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-focusBorder);
+  border-radius: 2px;
+  font-size: 12px;
+  height: 18px;
+  max-width: 120px;
+  outline: none;
+}

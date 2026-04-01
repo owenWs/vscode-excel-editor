@@ -1,0 +1,68 @@
+{
+  "name": "vscode-xlsm-editor",
+  "displayName": "XLSM Editor",
+  "description": "在 VS Code 中查看和编辑 .xlsm/.xlsx 文件，保留 VBA 宏",
+  "version": "0.3.1",
+  "publisher": "shun-wang",
+  "author": {
+    "name": "shun.wang"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "xlsmEditor.checkForUpdates",
+        "title": "XLSM Editor: 检查更新"
+      }
+    ],
+    "configuration": {
+      "title": "XLSM Editor",
+      "properties": {
+        "xlsmEditor.githubRepo": {
+          "type": "string",
+          "default": "owenWs/vscode-xlsm-editor",
+          "description": "GitHub 仓库地址（格式：owner/repo），用于自动检查更新。"
+        },
+        "xlsmEditor.autoCheckUpdates": {
+          "type": "boolean",
+          "default": true,
+          "description": "启动时自动检查更新"
+        }
+      }
+    },
+    "customEditors": [
+      {
+        "viewType": "xlsmEditor.xlsmEditor",
+        "displayName": "XLSM Editor",
+        "selector": [
+          { "filenamePattern": "*.xlsm" },
+          { "filenamePattern": "*.xlsx" },
+          { "filenamePattern": "*.xls" }
+        ],
+        "priority": "default"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "node esbuild.js",
+    "compile:prod": "node esbuild.js --production",
+    "watch": "node esbuild.js --watch",
+    "package": "npm run compile:prod && vsce package --no-dependencies",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "xlsx": "0.18.5"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "esbuild": "^0.20.0",
+    "@vscode/vsce": "^2.22.0"
+  }
+}

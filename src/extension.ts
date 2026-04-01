@@ -10,13 +10,13 @@ export function activate(context: vscode.ExtensionContext): void {
 
   // 手动检查更新命令
   context.subscriptions.push(
-    vscode.commands.registerCommand('xlsmEditor.checkForUpdates', () => {
+    vscode.commands.registerCommand('excelEditor.checkForUpdates', () => {
       checkForUpdates(context, false);
     })
   );
 
   // 启动时静默检查（延迟 5 秒，避免影响启动速度）
-  const autoCheck = vscode.workspace.getConfiguration('xlsmEditor').get('autoCheckUpdates', true);
+  const autoCheck = vscode.workspace.getConfiguration('excelEditor').get('autoCheckUpdates', true);
   if (autoCheck) {
     setTimeout(() => checkForUpdates(context, true), 5000);
   }

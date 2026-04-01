@@ -9,7 +9,7 @@
    - Windows/Linux: `Ctrl + Shift + P`
    - macOS: `Cmd + Shift + P`
 3. 在命令面板中输入并选择：`Extensions: Install from VSIX...`
-4. 浏览并选择下载的 `vscode-xlsm-editor-0.2.0.vsix` 文件
+4. 浏览并选择下载的 `vscode-excel-editor-0.2.0.vsix` 文件
 5. 等待安装完成，VS Code 会提示"安装成功"
 6. 重新加载窗口（如需要）
 
@@ -18,7 +18,7 @@
 打开终端/命令提示符，执行以下命令：
 
 ```bash
-code --install-extension /path/to/vscode-xlsm-editor-0.2.0.vsix
+code --install-extension /path/to/vscode-excel-editor-0.2.0.vsix
 ```
 
 将 `/path/to/` 替换为实际的文件路径。
@@ -26,7 +26,7 @@ code --install-extension /path/to/vscode-xlsm-editor-0.2.0.vsix
 ## 验证安装
 
 1. 在 VS Code 中按 `Ctrl + Shift + X`（macOS: `Cmd + Shift + X`）打开扩展面板
-2. 搜索 "XLSM Editor"
+2. 搜索 "Excel Editor"
 3. 确认已安装且版本为 0.2.0
 
 ## 首次使用
@@ -43,7 +43,7 @@ code --install-extension /path/to/vscode-xlsm-editor-0.2.0.vsix
 
 1. 卸载旧版本：
    - 打开扩展面板（`Ctrl + Shift + X`）
-   - 找到 "XLSM Editor"
+   - 找到 "Excel Editor"
    - 点击齿轮图标 → 卸载
    
 2. 重启 VS Code
@@ -55,14 +55,14 @@ code --install-extension /path/to/vscode-xlsm-editor-0.2.0.vsix
 ## 卸载
 
 1. 打开扩展面板（`Ctrl + Shift + X`）
-2. 找到 "XLSM Editor"
+2. 找到 "Excel Editor"
 3. 点击齿轮图标 → 卸载
 4. 重启 VS Code 以完全清除
 
 或通过命令行：
 
 ```bash
-code --uninstall-extension shun-wang.vscode-xlsm-editor
+code --uninstall-extension shun-wang.vscode-excel-editor
 ```
 
 ## 故障排除
@@ -102,7 +102,7 @@ code --uninstall-extension shun-wang.vscode-xlsm-editor
 ```json
 {
   // GitHub 仓库地址，用于检查更新
-  "xlsmEditor.githubRepo": "shun-wang/vscode-xlsm-editor",
+  "xlsmEditor.githubRepo": "shun-wang/vscode-excel-editor",
 
   // 启动时自动检查更新
   "xlsmEditor.autoCheckUpdates": true

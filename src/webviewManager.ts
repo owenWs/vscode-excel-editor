@@ -20,7 +20,7 @@ export class WebviewManager {
              style-src ${webview.cspSource} 'unsafe-inline';
              script-src 'nonce-${nonce}';" />
   <link rel="stylesheet" href="${styleUri}" />
-  <title>XLSM Editor</title>
+  <title>Excel Editor</title>
 </head>
 <body>
   <div id="sheet-tabs" class="sheet-tabs" role="tablist"></div>

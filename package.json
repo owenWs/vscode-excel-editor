@@ -1,6 +1,6 @@
 {
-  "name": "vscode-xlsm-editor",
-  "displayName": "XLSM Editor",
+  "name": "vscode-excel-editor",
+  "displayName": "Excel Editor",
   "description": "在 VS Code 中查看和编辑 .xlsm/.xlsx 文件，保留 VBA 宏",
   "version": "0.3.1",
   "publisher": "shun-wang",
@@ -16,19 +16,19 @@
   "contributes": {
     "commands": [
       {
-        "command": "xlsmEditor.checkForUpdates",
-        "title": "XLSM Editor: 检查更新"
+        "command": "excelEditor.checkForUpdates",
+        "title": "Excel Editor: 检查更新"
       }
     ],
     "configuration": {
-      "title": "XLSM Editor",
+      "title": "Excel Editor",
       "properties": {
-        "xlsmEditor.githubRepo": {
+        "excelEditor.githubRepo": {
           "type": "string",
-          "default": "owenWs/vscode-xlsm-editor",
+          "default": "owenWs/vscode-excel-editor",
           "description": "GitHub 仓库地址（格式：owner/repo），用于自动检查更新。"
         },
-        "xlsmEditor.autoCheckUpdates": {
+        "excelEditor.autoCheckUpdates": {
           "type": "boolean",
           "default": true,
           "description": "启动时自动检查更新"
@@ -37,8 +37,8 @@
     },
     "customEditors": [
       {
-        "viewType": "xlsmEditor.xlsmEditor",
-        "displayName": "XLSM Editor",
+        "viewType": "excelEditor.excelEditor",
+        "displayName": "Excel Editor",
         "selector": [
           { "filenamePattern": "*.xlsm" },
           { "filenamePattern": "*.xlsx" },

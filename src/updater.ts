@@ -13,7 +13,7 @@ interface GitHubRelease {
 /** 跟随重定向的 HTTPS GET，返回解析后的 JSON */
 function fetchJson<T>(url: string): Promise<T> {
   return new Promise((resolve, reject) => {
-    const req = https.get(url, { headers: { 'User-Agent': 'vscode-xlsm-editor' } }, (res) => {
+    const req = https.get(url, { headers: { 'User-Agent': 'vscode-excel-editor' } }, (res) => {
       if (res.statusCode === 301 || res.statusCode === 302) {
         if (res.headers.location) { resolve(fetchJson<T>(res.headers.location)); return; }
       }
@@ -32,7 +32,7 @@ function downloadFile(url: string, destPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const follow = (u: string, depth = 0) => {
       if (depth > 5) { reject(new Error('重定向次数过多')); return; }
-      const req = https.get(u, { headers: { 'User-Agent': 'vscode-xlsm-editor' } }, (res) => {
+      const req = https.get(u, { headers: { 'User-Agent': 'vscode-excel-editor' } }, (res) => {
         if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307 || res.statusCode === 308) {
           if (res.headers.location) { res.resume(); follow(res.headers.location, depth + 1); return; }
         }
@@ -64,13 +64,13 @@ export async function checkForUpdates(
   context: vscode.ExtensionContext,
   silent = false
 ): Promise<void> {
-  const config = vscode.workspace.getConfiguration('xlsmEditor');
+  const config = vscode.workspace.getConfiguration('excelEditor');
   const repo: string = config.get('githubRepo', '').trim();
 
   if (!repo) {
     if (!silent) {
       vscode.window.showInformationMessage(
-        'XLSM Editor: 请先在设置中配置 xlsmEditor.githubRepo（格式：owner/repo）'
+        'Excel Editor: 请先在设置中配置 excelEditor.githubRepo（格式：owner/repo）'
       );
     }
     return;
@@ -87,7 +87,7 @@ export async function checkForUpdates(
 
     if (!isNewer(currentVersion, remoteVersion)) {
       if (!silent) {
-        vscode.window.showInformationMessage(`XLSM Editor: 已是最新版本 v${currentVersion}`);
+        vscode.window.showInformationMessage(`Excel Editor: 已是最新版本 v${currentVersion}`);
       }
       return;
     }
@@ -96,7 +96,7 @@ export async function checkForUpdates(
     const vsixAsset = release.assets.find((a) => a.name.endsWith('.vsix'));
 
     const action = await vscode.window.showInformationMessage(
-      `XLSM Editor 有新版本 v${remoteVersion}（当前 v${currentVersion}）`,
+      `Excel Editor 有新版本 v${remoteVersion}（当前 v${currentVersion}）`,
       '立即更新',
       '查看详情',
       '忽略'
@@ -121,7 +121,7 @@ export async function checkForUpdates(
     await vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Notification,
-        title: `正在下载 XLSM Editor v${remoteVersion}...`,
+        title: `正在下载 Excel Editor v${remoteVersion}...`,
         cancellable: false,
       },
       async (progress) => {
@@ -141,7 +141,7 @@ export async function checkForUpdates(
     try { fs.unlinkSync(tmpPath); } catch (_) {}
 
     const reload = await vscode.window.showInformationMessage(
-      `XLSM Editor 已更新到 v${remoteVersion}，重载窗口后生效`,
+      `Excel Editor 已更新到 v${remoteVersion}，重载窗口后生效`,
       '立即重载'
     );
     if (reload === '立即重载') {
@@ -150,7 +150,7 @@ export async function checkForUpdates(
 
   } catch (e) {
     if (!silent) {
-      vscode.window.showWarningMessage(`XLSM Editor: 检查更新失败 — ${e}`);
+      vscode.window.showWarningMessage(`Excel Editor: 检查更新失败 — ${e}`);
     }
   }
 }

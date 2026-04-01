@@ -5,7 +5,7 @@ import { WebviewToExtensionMessage } from './types';
 
 export class XlsmEditorProvider implements vscode.CustomEditorProvider<XlsmDocument> {
 
-  public static readonly viewType = 'xlsmEditor.xlsmEditor';
+  public static readonly viewType = 'excelEditor.excelEditor';
 
   private readonly _onDidChangeCustomDocument = new vscode.EventEmitter<
     vscode.CustomDocumentEditEvent<XlsmDocument>

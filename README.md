@@ -1,4 +1,4 @@
-# XLSM Editor - VS Code 扩展
+# Excel Editor - VS Code 扩展
 
 [![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
@@ -22,14 +22,14 @@
 ## 📦 安装
 
 ### 方法一：从 VSIX 安装
-1. 下载 `vscode-xlsm-editor-0.2.0.vsix`
+1. 下载 `vscode-excel-editor-0.2.0.vsix`
 2. 在 VS Code 中按 `Ctrl+Shift+P` (Mac: `Cmd+Shift+P`)
 3. 输入 "Extensions: Install from VSIX..."
 4. 选择下载的 .vsix 文件
 
 ### 方法二：命令行安装
 ```bash
-code --install-extension vscode-xlsm-editor-0.2.0.vsix
+code --install-extension vscode-excel-editor-0.2.0.vsix
 ```
 
 ## 🚀 使用方法
@@ -103,7 +103,7 @@ code --install-extension vscode-xlsm-editor-0.2.0.vsix
 ```json
 {
   // GitHub 仓库地址，用于检查更新（格式：owner/repo）
-  "xlsmEditor.githubRepo": "shun-wang/vscode-xlsm-editor",
+  "xlsmEditor.githubRepo": "shun-wang/vscode-excel-editor",
 
   // 启动时自动检查更新
   "xlsmEditor.autoCheckUpdates": true

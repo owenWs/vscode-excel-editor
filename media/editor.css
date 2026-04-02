@@ -274,6 +274,31 @@ body {
   outline-offset: -1px;
 }
 
+/* ---- 行列拖拽视觉反馈 ---- */
+.row-header.dragging,
+.col-header.dragging {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+
+.row-header[draggable="true"],
+.col-header[draggable="true"] {
+  cursor: grab;
+}
+
+.row-header.drag-over-top {
+  border-top: 2px solid var(--vscode-focusBorder, #0078d4) !important;
+}
+.row-header.drag-over-bottom {
+  border-bottom: 2px solid var(--vscode-focusBorder, #0078d4) !important;
+}
+.col-header.drag-over-left {
+  border-left: 2px solid var(--vscode-focusBorder, #0078d4) !important;
+}
+.col-header.drag-over-right {
+  border-right: 2px solid var(--vscode-focusBorder, #0078d4) !important;
+}
+
 /* ---- 右键上下文菜单 ---- */
 .context-menu {
   position: fixed;

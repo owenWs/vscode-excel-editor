@@ -145,6 +145,20 @@ export interface DeleteColsMessage {
   colIndices: number[];
 }
 
+export interface MoveRowMessage {
+  type: 'moveRow';
+  sheetName: string;
+  fromRow: number;  // 0-based 源行索引
+  toRow: number;    // 0-based 目标位置（插入到此行之前）
+}
+
+export interface MoveColMessage {
+  type: 'moveCol';
+  sheetName: string;
+  fromCol: number;
+  toCol: number;
+}
+
 // ===== 数据结构 =====
 
 export interface SheetMeta {
@@ -185,4 +199,6 @@ export type WebviewToExtensionMessage =
   | PasteRowsMessage
   | PasteColsMessage
   | DeleteRowsMessage
-  | DeleteColsMessage;
+  | DeleteColsMessage
+  | MoveRowMessage
+  | MoveColMessage;

@@ -17,6 +17,12 @@ const state = {
   lastClickedRow: -1,       // Shift+Click 锚点
   lastClickedCol: -1,
   clipboard: null,  // { type:'rows'|'cols'|'cell', rowIndices?, colIndices?, value?, sheetName? }
+  // 拖拽状态
+  dragType: null,        // 'row' | 'col' | null
+  dragFrom: -1,          // 拖拽源索引
+  dragOverRow: -1,       // 当前悬停的行索引
+  dragOverCol: -1,       // 当前悬停的列索引
+  dragInsertBefore: true, // 插入到悬停行/列之前（true）还是之后（false）
 };
 
 // ---- DOM 引用 ----
@@ -265,12 +271,56 @@ function renderTable() {
     th.className = 'col-header';
     th.textContent = colIndexToLetter(c);
     th.dataset.col = String(c);
+    th.setAttribute('draggable', 'true');
     th.addEventListener('click', (e) => onColHeaderClick(e, c));
     th.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       // 若点击的列不在当前选中集合内，则单独选中该列
       if (!state.selectedCols.has(c)) { setColSelection([c]); }
       showColContextMenu(e.clientX, e.clientY);
+    });
+    th.addEventListener('dragstart', (e) => {
+      state.dragType = 'col';
+      state.dragFrom = c;
+      if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', String(c));
+      }
+      th.classList.add('dragging');
+    });
+    th.addEventListener('dragend', () => {
+      th.classList.remove('dragging');
+      clearDragIndicator();
+      state.dragType = null;
+      state.dragFrom = -1;
+      state.dragOverCol = -1;
+    });
+    th.addEventListener('dragover', (e) => {
+      if (state.dragType !== 'col') { return; }
+      e.preventDefault();
+      if (e.dataTransfer) { e.dataTransfer.dropEffect = 'move'; }
+      const rect = th.getBoundingClientRect();
+      const mid = rect.left + rect.width / 2;
+      state.dragOverCol = c;
+      state.dragInsertBefore = e.clientX < mid;
+      applyDragIndicator();
+    });
+    th.addEventListener('dragleave', () => {
+      if (state.dragType !== 'col') { return; }
+      th.classList.remove('drag-over-left', 'drag-over-right');
+    });
+    th.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (state.dragType !== 'col' || state.dragFrom < 0) { return; }
+      const fromCol = state.dragFrom;
+      let toCol = state.dragInsertBefore ? c : c + 1;
+      clearDragIndicator();
+      state.dragType = null;
+      state.dragFrom = -1;
+      state.dragOverCol = -1;
+      // 拖到自身相邻位置，无需操作
+      if (toCol === fromCol || toCol === fromCol + 1) { return; }
+      vscode.postMessage({ type: 'moveCol', sheetName: state.activeSheet, fromCol, toCol });
     });
     headRow.appendChild(th);
   }
@@ -283,11 +333,55 @@ function renderTable() {
     rowTh.className = 'row-header';
     rowTh.textContent = String(r + 1);
     rowTh.dataset.row = String(r);
+    rowTh.setAttribute('draggable', 'true');
     rowTh.addEventListener('click', (e) => onRowHeaderClick(e, r));
     rowTh.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       if (!state.selectedRows.has(r)) { setRowSelection([r]); }
       showRowContextMenu(e.clientX, e.clientY);
+    });
+    rowTh.addEventListener('dragstart', (e) => {
+      state.dragType = 'row';
+      state.dragFrom = r;
+      if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', String(r));
+      }
+      rowTh.classList.add('dragging');
+    });
+    rowTh.addEventListener('dragend', () => {
+      rowTh.classList.remove('dragging');
+      clearDragIndicator();
+      state.dragType = null;
+      state.dragFrom = -1;
+      state.dragOverRow = -1;
+    });
+    rowTh.addEventListener('dragover', (e) => {
+      if (state.dragType !== 'row') { return; }
+      e.preventDefault();
+      if (e.dataTransfer) { e.dataTransfer.dropEffect = 'move'; }
+      const rect = rowTh.getBoundingClientRect();
+      const mid = rect.top + rect.height / 2;
+      state.dragOverRow = r;
+      state.dragInsertBefore = e.clientY < mid;
+      applyDragIndicator();
+    });
+    rowTh.addEventListener('dragleave', () => {
+      if (state.dragType !== 'row') { return; }
+      rowTh.classList.remove('drag-over-top', 'drag-over-bottom');
+    });
+    rowTh.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (state.dragType !== 'row' || state.dragFrom < 0) { return; }
+      const fromRow = state.dragFrom;
+      let toRow = state.dragInsertBefore ? r : r + 1;
+      clearDragIndicator();
+      state.dragType = null;
+      state.dragFrom = -1;
+      state.dragOverRow = -1;
+      // 拖到自身相邻位置，无需操作
+      if (toRow === fromRow || toRow === fromRow + 1) { return; }
+      vscode.postMessage({ type: 'moveRow', sheetName: state.activeSheet, fromRow, toRow });
     });
     tr.appendChild(rowTh);
 
@@ -455,6 +549,30 @@ function selectCell(row, col, td) {
 function focusCell(row, col) {
   const td = tableWrapper?.querySelector(`td[data-row="${row}"][data-col="${col}"]`);
   if (td) { selectCell(row, col, /** @type {HTMLTableCellElement} */ (td)); }
+}
+
+// ---- 拖拽指示线 ----
+function applyDragIndicator() {
+  // 先清除所有指示线
+  tableWrapper?.querySelectorAll('.drag-over-top,.drag-over-bottom,.drag-over-left,.drag-over-right')
+    .forEach(el => el.classList.remove('drag-over-top','drag-over-bottom','drag-over-left','drag-over-right'));
+
+  if (state.dragType === 'row' && state.dragOverRow >= 0) {
+    const th = tableWrapper?.querySelector(`th.row-header[data-row="${state.dragOverRow}"]`);
+    if (th) {
+      th.classList.add(state.dragInsertBefore ? 'drag-over-top' : 'drag-over-bottom');
+    }
+  } else if (state.dragType === 'col' && state.dragOverCol >= 0) {
+    const th = tableWrapper?.querySelector(`th.col-header[data-col="${state.dragOverCol}"]`);
+    if (th) {
+      th.classList.add(state.dragInsertBefore ? 'drag-over-left' : 'drag-over-right');
+    }
+  }
+}
+
+function clearDragIndicator() {
+  tableWrapper?.querySelectorAll('.drag-over-top,.drag-over-bottom,.drag-over-left,.drag-over-right')
+    .forEach(el => el.classList.remove('drag-over-top','drag-over-bottom','drag-over-left','drag-over-right'));
 }
 
 // ---- 剪贴板视觉标识 ----

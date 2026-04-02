@@ -468,6 +468,84 @@ export class XlsmDocument implements vscode.CustomDocument {
     }
   }
 
+  /** 移动行：将 fromRow 移动到 toRow 位置之前 */
+  moveRow(sheetName: string, fromRow: number, toRow: number): void {
+    if (fromRow === toRow) { return; }
+    const sheet = this.workbook.Sheets[sheetName];
+    if (!sheet || !sheet['!ref']) { return; }
+
+    const range = xlsx.utils.decode_range(sheet['!ref']);
+    const maxCol = range.e.c;
+
+    // 保存源行数据
+    const savedRow: (xlsx.CellObject | undefined)[] = [];
+    for (let c = 0; c <= maxCol; c++) {
+      const addr = xlsx.utils.encode_cell({ r: fromRow, c });
+      const cell = sheet[addr];
+      savedRow.push(cell ? { ...cell } : undefined);
+    }
+
+    // 删除源行
+    this.deleteRow(sheetName, fromRow, 1);
+
+    // 删除后目标索引需要调整
+    let insertAt = toRow;
+    if (toRow > fromRow) { insertAt--; }
+
+    // 插入空行
+    this.insertRow(sheetName, insertAt, 1);
+
+    // 填回数据
+    const newRange = xlsx.utils.decode_range(sheet['!ref']);
+    for (let c = 0; c <= newRange.e.c; c++) {
+      const addr = xlsx.utils.encode_cell({ r: insertAt, c });
+      if (savedRow[c]) {
+        sheet[addr] = { ...savedRow[c]! };
+      } else {
+        delete sheet[addr];
+      }
+    }
+  }
+
+  /** 移动列：将 fromCol 移动到 toCol 位置之前 */
+  moveCol(sheetName: string, fromCol: number, toCol: number): void {
+    if (fromCol === toCol) { return; }
+    const sheet = this.workbook.Sheets[sheetName];
+    if (!sheet || !sheet['!ref']) { return; }
+
+    const range = xlsx.utils.decode_range(sheet['!ref']);
+    const maxRow = range.e.r;
+
+    // 保存源列数据
+    const savedCol: (xlsx.CellObject | undefined)[] = [];
+    for (let r = 0; r <= maxRow; r++) {
+      const addr = xlsx.utils.encode_cell({ r, c: fromCol });
+      const cell = sheet[addr];
+      savedCol.push(cell ? { ...cell } : undefined);
+    }
+
+    // 删除源列
+    this.deleteCol(sheetName, fromCol, 1);
+
+    // 删除后目标索引需要调整
+    let insertAt = toCol;
+    if (toCol > fromCol) { insertAt--; }
+
+    // 插入空列
+    this.insertCol(sheetName, insertAt, 1);
+
+    // 填回数据
+    const newRange = xlsx.utils.decode_range(sheet['!ref']);
+    for (let r = 0; r <= newRange.e.r; r++) {
+      const addr = xlsx.utils.encode_cell({ r, c: insertAt });
+      if (savedCol[r]) {
+        sheet[addr] = { ...savedCol[r]! };
+      } else {
+        delete sheet[addr];
+      }
+    }
+  }
+
   /** 删除多列（从大到小依次删除） */
   deleteCols(sheetName: string, colIndices: number[]): void {
     const sorted = [...colIndices].sort((a, b) => b - a);

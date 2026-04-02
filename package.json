@@ -2,7 +2,7 @@
   "name": "vscode-excel-editor",
   "displayName": "Excel Editor",
   "description": "在 VS Code 中查看和编辑 .xlsm/.xlsx 文件，保留 VBA 宏",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "Apache-2.0",
   "publisher": "shun-wang",
   "author": {

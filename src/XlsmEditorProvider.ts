@@ -357,6 +357,30 @@ export class XlsmEditorProvider implements vscode.CustomEditorProvider<XlsmDocum
         });
         break;
       }
+
+      case 'moveRow': {
+        document.moveRow(msg.sheetName, msg.fromRow, msg.toRow);
+        this.sendSheetData(panel, document, msg.sheetName);
+        this._onDidChangeCustomDocument.fire({
+          document,
+          undo: () => { /* moveRow undo 暂不实现 */ },
+          redo: () => { document.moveRow(msg.sheetName, msg.fromRow, msg.toRow); },
+          label: `移动第 ${msg.fromRow + 1} 行到第 ${msg.toRow + 1} 行`,
+        });
+        break;
+      }
+
+      case 'moveCol': {
+        document.moveCol(msg.sheetName, msg.fromCol, msg.toCol);
+        this.sendSheetData(panel, document, msg.sheetName);
+        this._onDidChangeCustomDocument.fire({
+          document,
+          undo: () => { /* moveCol undo 暂不实现 */ },
+          redo: () => { document.moveCol(msg.sheetName, msg.fromCol, msg.toCol); },
+          label: `移动第 ${String.fromCharCode(65 + msg.fromCol)} 列到第 ${String.fromCharCode(65 + msg.toCol)} 列`,
+        });
+        break;
+      }
     }
   }
 
